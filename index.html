@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#FF9800">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Humanoid Chatbot</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,62 +11,28 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header for Professional Look -->
-        <header class="header">
-            <h1>🤖 Humanoid Assistant</h1>
-        </header>
-
-        <!-- Enhanced Humanoid Avatar -->
+        <!-- Humanoid Avatar -->
         <div class="avatar">
-            <svg viewBox="0 0 100 140" class="robot-svg" id="robot">
+            <svg viewBox="0 0 100 120" class="robot-svg">
                 <defs>
-                    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#C0C0C0;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
-                    </linearGradient>
-                    <linearGradient id="glow" x1="50%" y1="50%" x2="50%" y2="100%">
-                        <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:0.8" />
-                        <stop offset="100%" style="stop-color:#00FFFF;stop-opacity:0" />
+                    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#FF9800;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#2196F3;stop-opacity:1" />
                     </linearGradient>
                 </defs>
-                <!-- Antenna -->
-                <line x1="50" y1="5" x2="50" y2="15" stroke="#FFEB3B" stroke-width="2"/>
-                <circle cx="50" cy="5" r="3" fill="#FFEB3B"/>
-                <!-- Head (Screen-like) -->
-                <rect x="35" y="15" width="30" height="20" rx="5" fill="#4A90E2" stroke="#333" stroke-width="1"/>
-                <!-- Eyes (Glowing) -->
-                <circle cx="42" cy="22" r="2" fill="url(#glow)"/>
-                <circle cx="58" cy="22" r="2" fill="url(#glow)"/>
                 <!-- Body -->
-                <rect x="30" y="35" width="40" height="40" rx="10" fill="url(#metal)" stroke="#333" stroke-width="1"/>
-                <!-- Chest Panel -->
-                <rect x="40" y="45" width="20" height="20" rx="3" fill="#FF9800" opacity="0.7"/>
-                <!-- Arms (Articulated) -->
-                <g class="arm-left">
-                    <rect x="20" y="40" width="10" height="25" rx="3" fill="url(#metal)" stroke="#333" stroke-width="1"/>
-                    <circle cx="25" cy="40" r="3" fill="#FF9800"/> <!-- Shoulder joint -->
-                    <rect x="15" y="65" width="8" height="15" rx="2" fill="url(#metal)"/> <!-- Forearm -->
-                </g>
-                <g class="arm-right">
-                    <rect x="70" y="40" width="10" height="25" rx="3" fill="url(#metal)" stroke="#333" stroke-width="1"/>
-                    <circle cx="75" cy="40" r="3" fill="#2196F3"/> <!-- Shoulder joint -->
-                    <rect x="75" y="65" width="8" height="15" rx="2" fill="url(#metal)"/> <!-- Forearm -->
-                    <circle cx="79" cy="65" r="2" fill="#2196F3"/> <!-- Elbow joint -->
-                </g>
-                <!-- Legs (Articulated) -->
-                <g class="leg-left">
-                    <rect x="35" y="75" width="8" height="30" rx="3" fill="url(#metal)" stroke="#333" stroke-width="1"/>
-                    <circle cx="39" cy="75" r="3" fill="#795548"/> <!-- Hip joint -->
-                    <rect x="33" y="105" width="6" height="15" rx="2" fill="url(#metal)"/> <!-- Shin -->
-                </g>
-                <g class="leg-right">
-                    <rect x="57" y="75" width="8" height="30" rx="3" fill="url(#metal)" stroke="#333" stroke-width="1"/>
-                    <circle cx="61" cy="75" r="3" fill="#795548"/> <!-- Hip joint -->
-                    <rect x="59" y="105" width="6" height="15" rx="2" fill="url(#metal)"/> <!-- Shin -->
-                </g>
-                <!-- Feet -->
-                <rect x="32" y="120" width="10" height="5" rx="2" fill="#333"/>
-                <rect x="58" y="120" width="10" height="5" rx="2" fill="#333"/>
+                <rect x="30" y="40" width="40" height="60" rx="5" fill="#4CAF50" />
+                <!-- Head -->
+                <circle cx="50" cy="25" r="15" fill="#FFEB3B" />
+                <!-- Eyes -->
+                <circle cx="42" cy="22" r="2" fill="#000" />
+                <circle cx="58" cy="22" r="2" fill="#000" />
+                <!-- Arms -->
+                <rect x="15" y="50" width="15" height="30" rx="2" fill="#FF9800" class="arm-left" />
+                <rect x="70" y="50" width="15" height="30" rx="2" fill="#2196F3" class="arm-right" />
+                <!-- Legs -->
+                <rect x="35" y="100" width="10" height="20" rx="2" fill="#795548" />
+                <rect x="55" y="100" width="10" height="20" rx="2" fill="#795548" />
             </svg>
         </div>
 
@@ -85,11 +48,6 @@
 
         <!-- Speaking Indicator -->
         <div id="speaking-indicator" class="speaking-indicator" style="display: none;">Bot is speaking...</div>
-
-        <!-- Loading Spinner (New for Professional Feel) -->
-        <div id="loading-spinner" class="loading-spinner" style="display: none;">
-            <div class="spinner"></div>
-        </div>
     </div>
 
     <script src="script.js"></script>
