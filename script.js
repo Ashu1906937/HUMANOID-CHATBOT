@@ -136,7 +136,8 @@ class Chatbot {
         this.messages.push({ text, isBot });
         const div = document.createElement('div');
         div.className = `message max-w-[85%] px-3 py-2 rounded-xl text-sm md:text-base leading-relaxed break-words shadow-sm border border-gray-700 ${
-   isBot ? 'self-start bg-gradient-to-r from-blue-800 to-blue-900 text-gray-100 rounded-br-sm' : 'self-end bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-bl-sm'
+    isBot ? 'self-start bg-gray-800/80 text-gray-100 rounded-br-sm' : 'self-end bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-bl-sm'
+}`;
         div.textContent = text;
         this.chatContainer.appendChild(div);
         this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
@@ -207,4 +208,5 @@ window.addEventListener('load', () => {
     });
     window.chatbot = new Chatbot(); // Global for debugging if needed
 });
+
 
