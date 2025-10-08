@@ -14,28 +14,37 @@ class Chatbot {
 
         this.initSpeech();
         this.bindEvents();
-        this.addMessage('Hello! I\'m your humanoid friend powered by Groq. Ask me anything!', true); // Updated welcome
+        this.addMessage('Hello! I\'m CHITTI, your advanced humanoid companion powered by Groq. I can chat via text or voice—ask me anything!', true);
     }
 
     initSpeech() {
-        if ('webkitSpeechRecognition' in window) {
-            this.recognition = new webkitSpeechRecognition();
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            this.recognition = new SpeechRecognition();
             this.recognition.continuous = false;
             this.recognition.interimResults = false;
             this.recognition.lang = 'en-US';
 
             this.recognition.onstart = () => {
                 this.isListening = true;
-                this.voiceBtn.textContent = '⏹️';
+                this.voiceBtn.innerHTML = '⏹️';
+                this.voiceBtn.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600');
             };
             this.recognition.onend = () => {
                 this.isListening = false;
-                this.voiceBtn.textContent = '🎤';
+                this.voiceBtn.innerHTML = '🎤';
+                this.voiceBtn.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-red-600');
+                this.voiceBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-600');
             };
             this.recognition.onerror = (e) => {
                 console.error('STT Error:', e.error);
                 this.isListening = false;
-                this.voiceBtn.textContent = '🎤';
+                this.voiceBtn.innerHTML = '🎤';
+                this.voiceBtn.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-red-600');
+                this.voiceBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-600');
+                if (e.error !== 'aborted') {
+                    this.addMessage('Voice input error—try again or use text.', true);
+                }
             };
             this.recognition.onresult = (e) => {
                 const transcript = e.results[0][0].transcript;
@@ -43,30 +52,41 @@ class Chatbot {
                 this.sendMessage();
             };
         } else {
-            console.warn('STT not supported');
-            this.voiceBtn.style.display = 'none'; // Hide button if unsupported
+            console.warn('Speech Recognition not supported');
+            this.voiceBtn.style.display = 'none';
         }
 
         if ('speechSynthesis' in window) {
             // TTS ready
         } else {
-            console.warn('TTS not supported');
+            console.warn('Speech Synthesis not supported');
+            // Optionally hide speaking indicator or adjust
         }
     }
 
     bindEvents() {
-        this.voiceBtn.addEventListener('click', () => {
+        this.voiceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             if (!this.isListening && !this.isSpeaking) {
                 this.startListening();
-            } else {
+            } else if (this.isListening) {
                 this.stopListening();
             }
         });
 
-        this.sendBtn.addEventListener('click', () => this.sendMessage());
-        this.messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.sendMessage();
+        this.sendBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.sendMessage();
         });
+        this.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMessage();
+            }
+        });
+
+        // Focus input on load for better mobile UX
+        setTimeout(() => this.messageInput.focus(), 500);
     }
 
     startListening() {
@@ -89,33 +109,50 @@ class Chatbot {
         this.addMessage(input, false);
         this.sendBtn.disabled = true;
         this.voiceBtn.disabled = true;
+        this.messageInput.disabled = true;
 
         try {
             const response = await this.callGroqAPI(input);
             this.addMessage(response, true);
-            this.speak(response);
+            if ('speechSynthesis' in window) {
+                this.speak(response);
+            }
         } catch (error) {
-            this.addMessage(error.message, true); // Shows specific error
+            const errorMsg = error.message.includes('401') ? 'Authentication issue—check your API key!' :
+                             error.message.includes('429') ? 'Too many requests—please wait a moment.' :
+                             'Connection error—try again soon.';
+            this.addMessage(errorMsg, true);
             console.error('Chat Error:', error);
         } finally {
             this.sendBtn.disabled = false;
-            if (this.voiceBtn.style.display !== 'none') {
-                this.voiceBtn.disabled = false;
-            }
+            this.voiceBtn.disabled = false;
+            this.messageInput.disabled = false;
+            this.messageInput.focus();
         }
     }
 
     addMessage(text, isBot) {
         this.messages.push({ text, isBot });
         const div = document.createElement('div');
-        div.className = `message ${isBot ? 'bot-message' : 'user-message'}`;
+        div.className = `message max-w-[75%] md:max-w-[85%] lg:max-w-[95%] px-4 py-3 rounded-2xl text-sm md:text-base leading-6 break-words shadow-sm transition-transform hover:-translate-y-0.5 ${
+            isBot ? 'self-start bg-gradient-to-r from-pink-300 to-red-400 text-white rounded-bl-md' : 'self-end bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-br-md'
+        }`;
         div.textContent = text;
         this.chatContainer.appendChild(div);
         this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+
+        // Animate in
+        div.style.opacity = '0';
+        div.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            div.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            div.style.opacity = '1';
+            div.style.transform = 'translateY(0)';
+        }, 10);
     }
 
     async callGroqAPI(userInput) {
-        const apiKey ='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'; // Replace with your actual Groq API key (gsk_...)
+        const apiKey = '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'; // TODO: Replace with your secure Groq API key (store in env vars for production)
         try {
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -124,49 +161,45 @@ class Chatbot {
                     'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.1-8b-instant',  // Fast free model; change to 'llama3-groq-70b-8192-tool-use' if needed
+                    model: 'llama-3.1-8b-instant',
                     messages: [{ role: 'user', content: userInput }],
-                    max_tokens: 300,
+                    max_tokens: 400,
                     temperature: 0.7
                 })
             });
 
             if (!response.ok) {
-                let errorMsg = `API Error ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    errorMsg += `: ${errorData.error?.message || 'Unknown details'}`;
-                } catch {}
-                console.error('Groq API Details:', errorMsg);
-                throw new Error(errorMsg);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
             }
 
             const data = await response.json();
-            return data.choices[0].message.content;
+            return data.choices[0].message.content.trim();
         } catch (error) {
-            let displayError = error.message.includes('401') ? 'Invalid API key—double-check your Groq key!' :
-                              error.message.includes('429') ? 'Rate limited—wait 1 min and retry!' :
-                              'Network issue—check your connection and try again.';
-            throw new Error(displayError);
+            throw new Error(error.message);
         }
     }
 
     speak(text) {
         if (this.isSpeaking) this.synthesis.cancel();
         this.isSpeaking = true;
-        this.speakingIndicator.style.display = 'block';
+        this.speakingIndicator.classList.remove('hidden');
+        this.speakingIndicator.textContent = 'CHITTI is speaking...';
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-        utterance.rate = 0.9;
-        utterance.pitch = 1.1;
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.9;
+
         utterance.onend = () => {
             this.isSpeaking = false;
-            this.speakingIndicator.style.display = 'none';
+            this.speakingIndicator.classList.add('hidden');
         };
-        utterance.onerror = () => {
+        utterance.onerror = (e) => {
+            console.error('TTS Error:', e);
             this.isSpeaking = false;
-            this.speakingIndicator.style.display = 'none';
+            this.speakingIndicator.classList.add('hidden');
         };
 
         this.synthesis.speak(utterance);
@@ -174,4 +207,12 @@ class Chatbot {
 }
 
 // Initialize on load
-window.addEventListener('load', () => new Chatbot());
+window.addEventListener('load', () => {
+    // Handle visibility change for better speech handling
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && window.chatbot && window.chatbot.isListening) {
+            window.chatbot.stopListening();
+        }
+    });
+    window.chatbot = new Chatbot(); // Global for debugging if needed
+});
