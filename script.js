@@ -11,10 +11,12 @@ class Chatbot {
         this.voiceBtn = document.getElementById('voice-btn');
         this.sendBtn = document.getElementById('send-btn');
         this.speakingIndicator = document.getElementById('speaking-indicator');
+        this.robot = document.getElementById('robot');
+        this.loadingSpinner = document.getElementById('loading-spinner');
 
         this.initSpeech();
         this.bindEvents();
-        this.addMessage('Hello! I\'m your humanoid friend powered by Groq. Ask me anything!', true); // Updated welcome
+        this.addMessage('Hello! I\'m your humanoid friend powered by Groq. Ask me anything!', true);
     }
 
     initSpeech() {
@@ -44,7 +46,7 @@ class Chatbot {
             };
         } else {
             console.warn('STT not supported');
-            this.voiceBtn.style.display = 'none'; // Hide button if unsupported
+            this.voiceBtn.style.display = 'none';
         }
 
         if ('speechSynthesis' in window) {
@@ -89,15 +91,19 @@ class Chatbot {
         this.addMessage(input, false);
         this.sendBtn.disabled = true;
         this.voiceBtn.disabled = true;
+        this.loadingSpinner.style.display = 'block';
 
         try {
             const response = await this.callGroqAPI(input);
             this.addMessage(response, true);
+            this.robot.classList.add('wave-greet');
+            setTimeout(() => this.robot.classList.remove('wave-greet'), 1500);
             this.speak(response);
         } catch (error) {
-            this.addMessage(error.message, true); // Shows specific error
+            this.addMessage(error.message, true);
             console.error('Chat Error:', error);
         } finally {
+            this.loadingSpinner.style.display = 'none';
             this.sendBtn.disabled = false;
             if (this.voiceBtn.style.display !== 'none') {
                 this.voiceBtn.disabled = false;
@@ -110,12 +116,19 @@ class Chatbot {
         const div = document.createElement('div');
         div.className = `message ${isBot ? 'bot-message' : 'user-message'}`;
         div.textContent = text;
+        div.classList.add('animate-in');
         this.chatContainer.appendChild(div);
         this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
     }
 
     async callGroqAPI(userInput) {
-        const apiKey ='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'; // Replace with your actual Groq API key (gsk_...)
+        const apiKey = 'https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',';  // Paste your Groq key here!
+        if (apiKey === 'https://api.groq.com/openai/v1/chat/completions', {
+                ) {
+            throw new Error('API key not set! Get one free at console.groq.com and paste it above.');
+        }
+
         try {
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -124,7 +137,7 @@ class Chatbot {
                     'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.1-8b-instant',  // Fast free model; change to 'llama3-groq-70b-8192-tool-use' if needed
+                    model: 'llama-3.1-8b-instant',
                     messages: [{ role: 'user', content: userInput }],
                     max_tokens: 300,
                     temperature: 0.7
@@ -173,5 +186,5 @@ class Chatbot {
     }
 }
 
-// Initialize on load
+// Init
 window.addEventListener('load', () => new Chatbot());
