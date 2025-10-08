@@ -28,20 +28,21 @@ class Chatbot {
             this.recognition.onstart = () => {
                 this.isListening = true;
                 this.voiceBtn.innerHTML = '⏹️';
-                this.voiceBtn.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600');
+                this.voiceBtn.classList.remove('bg-primary-600', 'hover:bg-primary-700');
+                this.voiceBtn.classList.add('bg-red-500', 'hover:bg-red-600');
             };
             this.recognition.onend = () => {
                 this.isListening = false;
                 this.voiceBtn.innerHTML = '🎤';
-                this.voiceBtn.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-red-600');
-                this.voiceBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-600');
+                this.voiceBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+                this.voiceBtn.classList.add('bg-primary-600', 'hover:bg-primary-700');
             };
             this.recognition.onerror = (e) => {
                 console.error('STT Error:', e.error);
                 this.isListening = false;
                 this.voiceBtn.innerHTML = '🎤';
-                this.voiceBtn.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-red-600');
-                this.voiceBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-600');
+                this.voiceBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+                this.voiceBtn.classList.add('bg-primary-600', 'hover:bg-primary-700');
                 if (e.error !== 'aborted') {
                     this.addMessage('Voice input error—try again or use text.', true);
                 }
@@ -134,21 +135,12 @@ class Chatbot {
     addMessage(text, isBot) {
         this.messages.push({ text, isBot });
         const div = document.createElement('div');
-        div.className = `message max-w-[75%] md:max-w-[85%] lg:max-w-[95%] px-4 py-3 rounded-2xl text-sm md:text-base leading-6 break-words shadow-sm transition-transform hover:-translate-y-0.5 ${
-            isBot ? 'self-start bg-gradient-to-r from-pink-300 to-red-400 text-white rounded-bl-md' : 'self-end bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-br-md'
+        div.className = `message max-w-[85%] px-3 py-2 rounded-xl text-sm md:text-base leading-relaxed break-words shadow-sm border border-gray-200 ${
+            isBot ? 'self-start bg-white/80 rounded-br-sm' : 'self-end bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-bl-sm'
         }`;
         div.textContent = text;
         this.chatContainer.appendChild(div);
         this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
-
-        // Animate in
-        div.style.opacity = '0';
-        div.style.transform = 'translateY(10px)';
-        setTimeout(() => {
-            div.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            div.style.opacity = '1';
-            div.style.transform = 'translateY(0)';
-        }, 10);
     }
 
     async callGroqAPI(userInput) {
