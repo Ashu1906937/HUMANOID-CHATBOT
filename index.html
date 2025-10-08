@@ -6,12 +6,27 @@
     <title>CHITTI - Humanoid Chatbot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f8fafc',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                        },
+                        accent: {
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                        },
+                    },
                     animation: {
                         'idle': 'idle 3s ease-in-out infinite',
                         'nod': 'nod 4s ease-in-out infinite',
@@ -19,16 +34,18 @@
                         'walk': 'walk 2s ease-in-out infinite',
                         'wave-arm': 'wave-arm 3s ease-in-out infinite',
                         'gradient-shift': 'gradientShift 20s ease infinite',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
                     },
                     keyframes: {
                         idle: {
                             '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-5px) rotate(2deg)' },
+                            '50%': { transform: 'translateY(-2px) rotate(1deg)' },
                         },
                         nod: {
                             '0%, 100%': { transform: 'rotate(0deg)' },
-                            '25%': { transform: 'rotate(-5deg)' },
-                            '75%': { transform: 'rotate(5deg)' },
+                            '25%': { transform: 'rotate(-3deg)' },
+                            '75%': { transform: 'rotate(3deg)' },
                         },
                         blink: {
                             '0%, 90%, 100%': { transform: 'scaleY(1)' },
@@ -36,17 +53,25 @@
                         },
                         walk: {
                             '0%, 100%': { transform: 'rotate(0deg)' },
-                            '25%': { transform: 'rotate(2deg)' },
-                            '75%': { transform: 'rotate(-2deg)' },
+                            '25%': { transform: 'rotate(1deg)' },
+                            '75%': { transform: 'rotate(-1deg)' },
                         },
                         'wave-arm': {
                             '0%, 100%': { transform: 'rotate(0deg)' },
-                            '50%': { transform: 'rotate(15deg)' },
+                            '50%': { transform: 'rotate(10deg)' },
                         },
                         gradientShift: {
                             '0%': { backgroundPosition: '0% 50%' },
                             '50%': { backgroundPosition: '100% 50%' },
                             '100%': { backgroundPosition: '0% 50%' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)' },
+                            '100%': { transform: 'translateY(0)' },
                         },
                     }
                 }
@@ -54,84 +79,95 @@
         }
     </script>
     <style>
-        /* Custom CSS for gradients and scrollbar (Tailwind doesn't cover all) */
+        /* Minimal custom CSS for subtle gradients and scrollbar */
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             background-size: 400% 400%;
             animation: gradient-shift 20s ease infinite;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            color: #334155;
             -webkit-overflow-scrolling: touch;
         }
         .chat-container::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         .chat-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(#667eea, #764ba2);
-            border-radius: 3px;
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 2px;
         }
         .head { transform-origin: center bottom; }
         .eye-left, .eye-right { transform-origin: center; }
         .legs { transform-origin: center bottom; }
         .arm-left, .arm-right { transform-origin: top center; }
+        .message {
+            animation: fade-in 0.3s ease-out, slide-up 0.3s ease-out;
+        }
     </style>
 </head>
-<body class="h-screen w-full overflow-hidden flex items-center justify-center p-4 md:p-5">
-    <div class="w-full max-w-4xl h-full flex flex-col gap-4 md:gap-6 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl p-4 md:p-5">
+<body class="min-h-screen w-full flex items-center justify-center p-2 md:p-4">
+    <div class="w-full max-w-md md:max-w-lg lg:max-w-2xl h-[95vh] md:h-[90vh] flex flex-col bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <!-- Header with Robot Name -->
+        <div class="px-6 py-4 border-b border-gray-100 bg-white/50">
+            <h1 class="text-xl md:text-2xl font-semibold text-primary-700 text-center">CHITTI</h1>
+            <p class="text-xs md:text-sm text-primary-500 text-center mt-1 opacity-75">Your AI Companion</p>
+        </div>
+
         <!-- Avatar -->
-        <div class="flex-shrink-0 flex justify-center py-4 md:py-6">
-            <svg class="robot-svg w-24 md:w-32 lg:w-40 h-auto drop-shadow-md animate-idle" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
-                <!-- Head -->
+        <div class="flex-shrink-0 flex justify-center py-4 md:py-6 bg-gradient-to-b from-white to-gray-50">
+            <svg class="robot-svg w-20 md:w-24 lg:w-32 h-auto drop-shadow-sm animate-idle filter grayscale-[0.3] opacity-90" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <!-- Simplified, minimalist robot design -->
                 <g class="head animate-nod">
-                    <circle cx="100" cy="50" r="40" fill="#4a90e2" stroke="#357abd" stroke-width="2"/>
-                    <!-- Eyes -->
-                    <circle class="eye-left animate-blink" cx="85" cy="45" r="6" fill="white"/>
-                    <circle class="eye-left" cx="85" cy="45" r="3" fill="#333"/>
-                    <circle class="eye-right animate-blink" cx="115" cy="45" r="6" fill="white"/>
-                    <circle class="eye-right" cx="115" cy="45" r="3" fill="#333"/>
-                    <!-- Antenna -->
-                    <line x1="100" y1="10" x2="100" y2="20" stroke="#ff6b6b" stroke-width="4"/>
-                    <circle cx="100" cy="5" r="5" fill="#ff6b6b"/>
+                    <ellipse cx="100" cy="50" rx="35" ry="35" fill="#64748b" stroke="#94a3b8" stroke-width="1"/>
+                    <!-- Eyes - subtle -->
+                    <circle class="eye-left animate-blink" cx="85" cy="45" r="4" fill="#e2e8f0"/>
+                    <circle cx="85" cy="45" r="2" fill="#475569"/>
+                    <circle class="eye-right animate-blink" cx="115" cy="45" r="4" fill="#e2e8f0"/>
+                    <circle cx="115" cy="45" r="2" fill="#475569"/>
+                    <!-- Minimal antenna -->
+                    <line x1="100" y1="15" x2="100" y2="25" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="100" cy="10" r="3" fill="#3b82f6"/>
                 </g>
-                <!-- Body -->
-                <rect x="70" y="90" width="60" height="80" rx="10" fill="#7ed321" stroke="#5fa015" stroke-width="2"/>
-                <!-- Arms -->
+                <!-- Body - clean rectangle -->
+                <rect x="75" y="90" width="50" height="70" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <!-- Arms - simplified -->
                 <g class="arm-left animate-wave-arm">
-                    <rect x="40" y="100" width="30" height="10" rx="5" fill="#4a90e2" stroke="#357abd" stroke-width="1"/>
-                    <rect x="30" y="110" width="10" height="50" rx="5" fill="#4a90e2" stroke="#357abd" stroke-width="1"/>
+                    <rect x="45" y="105" width="25" height="8" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
+                    <rect x="35" y="113" width="8" height="40" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
                 </g>
                 <g class="arm-right animate-wave-arm">
-                    <rect x="130" y="100" width="30" height="10" rx="5" fill="#4a90e2" stroke="#357abd" stroke-width="1"/>
-                    <rect x="160" y="110" width="10" height="50" rx="5" fill="#4a90e2" stroke="#357abd" stroke-width="1"/>
+                    <rect x="130" y="105" width="25" height="8" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
+                    <rect x="157" y="113" width="8" height="40" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
                 </g>
-                <!-- Legs -->
+                <!-- Legs - subtle -->
                 <g class="legs animate-walk">
-                    <rect x="80" y="170" width="15" height="60" rx="7" fill="#f5a623" stroke="#d98a1a" stroke-width="1"/>
-                    <rect x="105" y="170" width="15" height="60" rx="7" fill="#f5a623" stroke="#d98a1a" stroke-width="1"/>
+                    <rect x="85" y="165" width="12" height="50" rx="6" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
+                    <rect x="103" y="165" width="12" height="50" rx="6" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
                 </g>
             </svg>
         </div>
 
         <!-- Chat Container -->
-        <div id="chat-container" class="chat-container flex-1 overflow-y-auto p-4 rounded-xl bg-white/80 scrollbar-thin scrollbar-thumb-gradient-to-b from-blue-500 to-purple-600">
+        <div id="chat-container" class="chat-container flex-1 overflow-y-auto p-4 space-y-3 md:space-y-4 scrollbar-thin scrollbar-thumb-primary-300/30">
             <!-- Messages will be appended here -->
         </div>
 
         <!-- Input Row -->
-        <div class="input-row flex gap-3 p-4 bg-white/90 rounded-2xl shadow-md">
-            <input 
-                type="text" 
-                id="message-input" 
-                placeholder="Type your message or use voice..." 
-                autocomplete="off"
-                class="flex-1 px-4 py-3 rounded-xl bg-transparent focus:bg-white/50 outline-none text-base font-medium min-h-[48px] w-full"
-            >
-            <button id="voice-btn" class="voice-btn w-12 h-12 rounded-full text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all text-xl" title="Voice Input">🎤</button>
-            <button id="send-btn" class="send-btn w-12 h-12 rounded-full text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all text-base font-medium px-3" title="Send">Send</button>
+        <div class="px-4 py-3 bg-white/50 border-t border-gray-100">
+            <div class="flex items-center gap-2">
+                <input 
+                    type="text" 
+                    id="message-input" 
+                    placeholder="Type a message..." 
+                    autocomplete="off"
+                    class="flex-1 px-3 py-2 rounded-lg bg-white/50 focus:bg-white border border-gray-200 focus:border-accent-500 focus:outline-none text-sm md:text-base font-medium transition-colors placeholder:text-gray-400"
+                >
+                <button id="voice-btn" class="voice-btn w-10 h-10 md:w-11 md:h-11 rounded-lg bg-primary-600 hover:bg-primary-700 text-white flex items-center justify-center shadow-sm hover:shadow-md transition-all text-lg" title="Voice Input">🎤</button>
+                <button id="send-btn" class="send-btn w-10 h-10 md:w-20 md:h-11 rounded-lg bg-accent-500 hover:bg-accent-600 text-white flex items-center justify-center shadow-sm hover:shadow-md transition-all text-xs md:text-sm font-medium px-2" title="Send">Send</button>
+            </div>
         </div>
 
         <!-- Speaking Indicator -->
-        <div id="speaking-indicator" class="speaking-indicator hidden text-center py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl text-white font-semibold text-sm shadow-md">
+        <div id="speaking-indicator" class="speaking-indicator hidden text-center py-2 bg-primary-600 text-white text-xs font-medium rounded-lg mx-4 mb-2 shadow-sm">
             CHITTI is speaking...
         </div>
     </div>
