@@ -81,7 +81,10 @@
     <style>
         /* Minimal custom CSS for subtle gradients and scrollbar */
         body {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+           body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    /* ... rest unchanged */
+}
             background-size: 400% 400%;
             animation: gradient-shift 20s ease infinite;
             font-family: 'Inter', sans-serif;
@@ -105,45 +108,76 @@
     </style>
 </head>
 <body class="min-h-screen w-full flex items-center justify-center p-2 md:p-4">
-    <div class="w-full max-w-md md:max-w-lg lg:max-w-2xl h-[95vh] md:h-[90vh] flex flex-col bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="w-full max-w-md md:max-w-lg lg:max-w-2xl h-[95vh] md:h-[90vh] flex flex-col bg-gray-900/90 backdrop-blur-md rounded-2xl shadow-sm border border-gray-700 overflow-hidden">
         <!-- Header with Robot Name -->
-        <div class="px-6 py-4 border-b border-gray-100 bg-white/50">
+       <div class="px-6 py-4 border-b border-gray-700 bg-gray-800/50">
             <h1 class="text-xl md:text-2xl font-semibold text-primary-700 text-center">CHITTI</h1>
             <p class="text-xs md:text-sm text-primary-500 text-center mt-1 opacity-75">Your AI Companion</p>
         </div>
 
         <!-- Avatar -->
         <div class="flex-shrink-0 flex justify-center py-4 md:py-6 bg-gradient-to-b from-white to-gray-50">
-            <svg class="robot-svg w-20 md:w-24 lg:w-32 h-auto drop-shadow-sm animate-idle filter grayscale-[0.3] opacity-90" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" fill="none">
-                <!-- Simplified, minimalist robot design -->
-                <g class="head animate-nod">
-                    <ellipse cx="100" cy="50" rx="35" ry="35" fill="#64748b" stroke="#94a3b8" stroke-width="1"/>
-                    <!-- Eyes - subtle -->
-                    <circle class="eye-left animate-blink" cx="85" cy="45" r="4" fill="#e2e8f0"/>
-                    <circle cx="85" cy="45" r="2" fill="#475569"/>
-                    <circle class="eye-right animate-blink" cx="115" cy="45" r="4" fill="#e2e8f0"/>
-                    <circle cx="115" cy="45" r="2" fill="#475569"/>
-                    <!-- Minimal antenna -->
-                    <line x1="100" y1="15" x2="100" y2="25" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="100" cy="10" r="3" fill="#3b82f6"/>
-                </g>
-                <!-- Body - clean rectangle -->
-                <rect x="75" y="90" width="50" height="70" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
-                <!-- Arms - simplified -->
-                <g class="arm-left animate-wave-arm">
-                    <rect x="45" y="105" width="25" height="8" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
-                    <rect x="35" y="113" width="8" height="40" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
-                </g>
-                <g class="arm-right animate-wave-arm">
-                    <rect x="130" y="105" width="25" height="8" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
-                    <rect x="157" y="113" width="8" height="40" rx="4" fill="#64748b" stroke="#94a3b8" stroke-width="0.5"/>
-                </g>
-                <!-- Legs - subtle -->
-                <g class="legs animate-walk">
-                    <rect x="85" y="165" width="12" height="50" rx="6" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
-                    <rect x="103" y="165" width="12" height="50" rx="6" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
-                </g>
-            </svg>
+           <svg class="robot-svg w-20 md:w-24 lg:w-32 h-auto drop-shadow-sm animate-idle" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <!-- Head - Metallic grey with subtle shine -->
+    <g class="head animate-nod">
+        <ellipse cx="100" cy="50" rx="35" ry="35" fill="url(#headGrad)" stroke="#6b7280" stroke-width="1.5"/>
+        <defs>
+            <linearGradient id="headGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#9ca3af"/>
+                <stop offset="100%" stop-color="#6b7280"/>
+            </linearGradient>
+        </defs>
+        <!-- Eyes - Glowing subtle blue for realism -->
+        <circle class="eye-left animate-blink" cx="85" cy="45" r="4" fill="#e2e8f0" filter="url(#glow)"/>
+        <circle cx="85" cy="45" r="2" fill="#334155"/>
+        <circle class="eye-right animate-blink" cx="115" cy="45" r="4" fill="#e2e8f0" filter="url(#glow)"/>
+        <circle cx="115" cy="45" r="2" fill="#334155"/>
+        <defs>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <!-- Antenna - Sleek grey -->
+        <line x1="100" y1="15" x2="100" y2="25" stroke="#9ca3af" stroke-width="2.5"/>
+        <circle cx="100" cy="10" r="3.5" fill="#9ca3af"/>
+    </g>
+    <!-- Body - Layered for depth -->
+    <rect x="75" y="90" width="50" height="70" rx="8" fill="url(#bodyGrad)" stroke="#6b7280" stroke-width="1"/>
+    <defs>
+        <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#9ca3af"/>
+            <stop offset="100%" stop-color="#4b5563"/>
+        </linearGradient>
+    </defs>
+    <!-- Arms - Jointed for realism -->
+    <g class="arm-left animate-wave-arm">
+        <rect x="45" y="105" width="25" height="8" rx="4" fill="#6b7280" stroke="#4b5563" stroke-width="0.5"/>
+        <circle cx="70" cy="109" r="3" fill="#9ca3af"/> <!-- Joint -->
+        <rect x="35" y="113" width="8" height="40" rx="4" fill="#6b7280" stroke="#4b5563" stroke-width="0.5"/>
+    </g>
+    <g class="arm-right animate-wave-arm">
+        <rect x="130" y="105" width="25" height="8" rx="4" fill="#6b7280" stroke="#4b5563" stroke-width="0.5"/>
+        <circle cx="125" cy="109" r="3" fill="#9ca3af"/> <!-- Joint -->
+        <rect x="157" y="113" width="8" height="40" rx="4" fill="#6b7280" stroke="#4b5563" stroke-width="0.5"/>
+    </g>
+    <!-- Legs - Stabilized with subtle shadow -->
+    <g class="legs animate-walk">
+        <rect x="85" y="165" width="12" height="50" rx="6" fill="url(#legGrad)" stroke="#4b5563" stroke-width="0.5"/>
+        <rect x="85" y="165" width="12" height="50" rx="6" fill="#334155" opacity="0.2" transform="translate(2,2)"/> <!-- Shadow -->
+        <rect x="103" y="165" width="12" height="50" rx="6" fill="url(#legGrad)" stroke="#4b5563" stroke-width="0.5"/>
+        <rect x="103" y="165" width="12" height="50" rx="6" fill="#334155" opacity="0.2" transform="translate(2,2)"/> <!-- Shadow -->
+    </g>
+    <defs>
+        <linearGradient id="legGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#9ca3af"/>
+            <stop offset="100%" stop-color="#6b7280"/>
+        </linearGradient>
+    </defs>
+</svg>
         </div>
 
         <!-- Chat Container -->
@@ -152,7 +186,7 @@
         </div>
 
         <!-- Input Row -->
-        <div class="px-4 py-3 bg-white/50 border-t border-gray-100">
+        <div class="px-4 py-3 bg-gray-800/50 border-t border-gray-700">
             <div class="flex items-center gap-2">
                 <input 
                     type="text" 
@@ -175,3 +209,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
